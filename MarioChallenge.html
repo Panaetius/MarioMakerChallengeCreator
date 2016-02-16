@@ -17,6 +17,7 @@
 
 	table#challenge-table {
 		border: 1px solid;
+		background:#000;
 	}
 	
 	table#challenge-table td{
@@ -338,7 +339,7 @@
 		<ul style="list-style-type:none;">
 			<li style=" padding: 5px;"><button id="generate-grid-button">Generate Challenge Grid</button></li>
 			<li style="padding: 5px;"><button id="pick-random-challenge">Pick random Challenge</button></li>
-			<li style="padding: 5px;"><button id="share-challenge">Create share link</button></li>
+			<li style="padding: 5px;"><button id="share-challenge">Create Share Link</button></li>
 			<li style="padding: 5px;"><div id="share"></div><input type="hidden" id="seed" /></li>
 			<li style=" padding: 5px;">Add challenge: <input type="text" id="challenge-text" /> <button id="add-challenge-button">Add</button></li>
 			<li style=" padding: 5px;">
@@ -356,6 +357,13 @@
 	<br/>
 	<br/>
 	<br/>
+	<div style="margin:0 auto; text-align:center">Click squares to mark them as Current (Blue), Successful (Green), Failed (Red). <br/> 
+	The "Pick Random Challenge" Button will randomly select the next challenge to do <br/>
+	The "Generate Challenge Grid" Button will randomize the grid <br/>
+	You can add or remove challenges to customize to your liking (challenges are saved locally in your browser)<br/>
+	You can share your current grid and challenges by clicking the "Create Share Link" and sharing the created link<br/>
+	You could pick a challenge randomly before starting each level, or you could mark a challenge complete after you finish a level, to see how far you get</div>
+	<br/><br/>
 	<div style="margin:0 auto; text-align:center">Made by Panaetius</div>
 </body>
 

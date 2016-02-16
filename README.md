@@ -1,4 +1,4 @@
-# MarioMakerChallengeCreator
+# Mario Maker Challenge Creator
 
 Allows to create challenges for Super Mario Maker 100 Mario runs.
 

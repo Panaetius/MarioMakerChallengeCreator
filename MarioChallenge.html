@@ -157,7 +157,9 @@
 			challenges.splice(x, 1);
 		}
 		
-		$('td.init, td.selected, td.done, td.fail').click(function() {                             
+		$('td.init, td.selected, td.done, td.fail').click(function() {    
+			$("td.selected").removeClass('selected').addClass('init');
+			
 			this.className = {
 			   fail : 'init', init: 'selected', selected: 'done', done: 'fail'
 			}[this.className];
@@ -166,6 +168,8 @@
 	
 	function PickRandomChallenge()
 	{
+		$("td.selected").removeClass('selected').addClass('init');
+		
 		var elements = $("td").not(".done").not(".fail");
 		
 		var target = elements[Math.floor((Math.random() * elements.length))];

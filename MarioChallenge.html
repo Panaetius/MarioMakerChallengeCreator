@@ -158,7 +158,7 @@
 		}
 		
 		$('td.init, td.selected, td.done, td.fail').click(function() {    
-			$("td.selected").removeClass('selected').addClass('init');
+			$("td.selected").not(this).removeClass('selected').addClass('init');
 			
 			this.className = {
 			   fail : 'init', init: 'selected', selected: 'done', done: 'fail'
@@ -171,6 +171,12 @@
 		$("td.selected").removeClass('selected').addClass('init');
 		
 		var elements = $("td").not(".done").not(".fail");
+		
+		if(elements.length == 1)
+		{
+			elements.removeClass("init").addClass("selected", 500, "linear");
+			return;
+		}
 		
 		var target = elements[Math.floor((Math.random() * elements.length))];
 		

@@ -286,9 +286,15 @@
 		if(i > 0)
 		{
 			var el = $(elements[Math.floor((Math.random() * elements.length))]);
+			
+			while(el[0] == cell[0])
+			{
+				el = $(elements[Math.floor((Math.random() * elements.length))]);
+			}
+			
 			el.removeClass("init").addClass("selected", 500, "linear", function(){SetCell(el, --i, elements, target);});
 		}else{
-			$(target).removeClass("init").addClass("selected", true);
+			$(target).removeClass("init").addClass("selected", true).effect( "shake" );
 		}
 	}
 	

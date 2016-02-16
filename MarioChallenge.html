@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Super Mario Maker Challenge</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+</head>
+
+<body>
+<style>
+	table#challenge-table {
+		border: 1px solid;
+	}
+	
+	table#challenge-table td{
+		border: 1px solid;
+		width:200px;
+		height:200px;
+		cursor:pointer;
+	}
+	
+	table#challenge-table td.done{
+		background-color:lightgreen;
+	}
+	
+	table#challenge-table td.fail{
+		background-color:#FF0033;
+	}
+	
+	table#challenge-table td.selected{
+		background-color:lightblue;
+	}
+	
+	table#challenge-table td.init{
+		background-color:white;
+	}
+	
+</style>
+<script type="text/javascript">
+	if(typeof(Storage) === "undefined") {
+		alert("this page needs a browser with local storage support");
+	}
+	
+	$( document ).ready(function() {
+		if(!localStorage.challenges)
+		{
+			localStorage.challenges = JSON.stringify(["Finish Level with 3 Green Mushrooms",
+				"Finish Level with a time below 60 seconds",
+				"Never touch the same Platform more than once in a row",
+				"Finish Level on the First Try",
+				"Finish Level in less than 5 Minutes total",
+				"Don't kill any Goombas",
+				"Finish Level using a Shell, P-Switch, Spring or POW Jump",
+				"Finish Level without using a Power Up",
+				"Finish Level with 5 Lives or less lost",
+				"Finish Level with a time below 30 seconds",
+				"Don't kill any Koopas (It's ok if they wake up again)",
+				"Don't kill any Lakitus",
+				"Don't get hit (Neccessary Dmg Boosts allowed)",
+				"Finish Level without cheese (Dev doors are cheese)",
+				"Go under ALL Thwomps you see",
+				"Finish Level in less than 60 seconds total"]);
+		}
+		
+		CreateChallenge();
+		
+		$("#pick-random-challenge").click(function(){PickRandomChallenge();});
+		
+		$("#generate-grid-button").click(function(){CreateChallenge();});
+		
+		$("#add-challenge-button").click(function(){AddChallenge();});
+		
+		LoadChallenges();
+	});
+	
+	function AddChallenge()
+	{
+		var text = $("#challenge-text").val();
+		
+		if(typeof(text) === "undefined" || text.length < 1){
+			return;
+		}
+		
+		var challenges = JSON.parse(localStorage.challenges);
+		
+		challenges.push(text);
+		
+		localStorage.challenges = JSON.stringify(challenges);
+		
+		LoadChallenges();
+	}
+	
+	function RemoveChallenge(el)
+	{
+		var i = $(el).attr('id').replace( /^\D+/g, '');
+	
+		var challenges = JSON.parse(localStorage.challenges);
+		
+		if(challenges.length == 16)
+		{
+			alert("Can't have less than 16 challenges");
+			return;
+		}
+		
+		challenges.splice(i, 1);
+		localStorage.challenges = JSON.stringify(challenges);
+		
+		LoadChallenges();
+	}
+	
+	function LoadChallenges()
+	{
+		$("#challenges").empty();
+		
+		var challenges = JSON.parse(localStorage.challenges);
+		
+		for(var challenge in challenges){
+			$("#challenges").append("<li>" + challenges[challenge] + "<button style='margin-left:10px;color:red;' id='challenge-entry-" + challenge + "'> X </button></li>");
+			
+			$("#challenge-entry-" + challenge).click(function(){RemoveChallenge(this)});
+		}
+	}
+	
+	function CreateChallenge()
+	{
+		$("#challenge-grid").empty();
+		$("#challenge-grid").append("<table id='challenge-table'></table>");
+		
+		$("#challenge-table").append("<tr id='first-tr'></tr>");
+		$("#challenge-table").append("<tr id='second-tr'></tr>");
+		$("#challenge-table").append("<tr id='third-tr'></tr>");
+		$("#challenge-table").append("<tr id='fourth-tr'></tr>");
+		
+		var challenges = JSON.parse(localStorage.challenges);
+		
+		for(var i = 0; i < 4; i++){
+			var x = Math.floor((Math.random() * challenges.length));
+			$("#first-tr").append("<td class='init'>" + challenges[x] + "</tr>");
+			challenges.splice(x, 1);
+		}
+		
+		for(var i = 0; i < 4; i++){
+			var x = Math.floor((Math.random() * challenges.length));
+			$("#second-tr").append("<td class='init'>" + challenges[x] + "</tr>");
+			challenges.splice(x, 1);
+		}
+		
+		for(var i = 0; i < 4; i++){
+			var x = Math.floor((Math.random() * challenges.length));
+			$("#third-tr").append("<td class='init'>" + challenges[x] + "</tr>");
+			challenges.splice(x, 1);
+		}
+		
+		for(var i = 0; i < 4; i++){
+			var x = Math.floor((Math.random() * challenges.length));
+			$("#fourth-tr").append("<td class='init'>" + challenges[x] + "</tr>");
+			challenges.splice(x, 1);
+		}
+		
+		$('td.init, td.selected, td.done, td.fail').click(function() {                             
+			this.className = {
+			   fail : 'init', init: 'selected', selected: 'done', done: 'fail'
+			}[this.className];
+		});
+	}
+	
+	function PickRandomChallenge()
+	{
+		var elements = $("td").not(".done").not(".fail");
+		
+		var target = elements[Math.floor((Math.random() * elements.length))];
+		
+		var el = $(elements[Math.floor((Math.random() * elements.length))]);
+		el.removeClass("init").addClass("selected", 500, "linear", function(){SetCell(el, 10, elements, target);});
+	}
+	
+	function SetCell(cell, i, elements, target)
+	{
+		cell.removeClass("selected").addClass("init");
+		
+		if(i > 0)
+		{
+			var el = $(elements[Math.floor((Math.random() * elements.length))]);
+			el.removeClass("init").addClass("selected", 500, "linear", function(){SetCell(el, --i, elements, target);});
+		}else{
+			$(target).removeClass("init").addClass("selected", true);
+		}
+	}
+	
+</script>
+	<div id="challenge-grid" style="width:1200px;display:inline-block;">a
+	</div>
+	<div id="settings-div" style="display:inline-block;">
+		<ul style="list-style-type:none;">
+			<li style=" padding: 5px;"><button id="generate-grid-button">Generate Challenge Grid</button></li>
+			<li style="padding: 5px;"><button id="pick-random-challenge">Pick random Challenge</button></li>
+			<li style=" padding: 5px;">Add challenge: <input type="text" id="challenge-text" /> <button id="add-challenge-button">Add</button></li>
+			<li style=" padding: 5px;">
+				Challenges:<br/>
+				<div id="challenge-list" >
+					<ul style="list-style-type:none;" id="challenges">
+					
+					</ul>
+				</div>
+			</li>
+		</ul>
+	</div>
+</body>
+
+</html>

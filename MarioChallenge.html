@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Super Mario Maker Challenge</title>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+	<title>Super Mario Maker Challenge</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/seedrandom/2.4.0/seedrandom.min.js">
+	</script>
 </head>
 
 <body>
@@ -14,8 +16,8 @@
 	
 	table#challenge-table td{
 		border: 1px solid;
-		width:200px;
-		height:200px;
+		width:120px;
+		height:120px;
 		cursor:pointer;
 	}
 	
@@ -62,6 +64,8 @@
 				"Finish Level in less than 60 seconds total"]);
 		}
 		
+		LoadChallenges();
+		
 		CreateChallenge();
 		
 		$("#pick-random-challenge").click(function(){PickRandomChallenge();});
@@ -70,8 +74,21 @@
 		
 		$("#add-challenge-button").click(function(){AddChallenge();});
 		
-		LoadChallenges();
+		$("#share-challenge").click(function(){ShareChallenge();});
 	});
+	
+	function ShareChallenge()
+	{
+		var seed = $("#seed").val();
+		
+		var challenges = JSON.stringify(GetChallenges());
+		
+		$("#share").empty();
+		
+		var url = getBaseUrl() + "?seed=" + seed + "&challenges=" + encodeURIComponent(challenges);
+		
+		$("#share").append('<a href="' + url + '">Share link</a>');
+	}
 	
 	function AddChallenge()
 	{
@@ -81,29 +98,51 @@
 			return;
 		}
 		
+		var urlChallenges = getUrlParameter('challenges');
+		
+		if(typeof(urlChallenges) !== "undefined")
+		{
+			if(!confirm("Adding a challenge from this page will overwrite your locally saved challenges")){
+				return;
+			}
+		}
+		
 		var challenges = JSON.parse(localStorage.challenges);
 		
 		challenges.push(text);
 		
-		localStorage.challenges = JSON.stringify(challenges);
+		localStorage.challenges = JSON.stringify(challenges);		
+		
+		if(typeof(urlChallenges) !== "undefined")
+		{
+			window.location = getBaseUrl();
+		}
 		
 		LoadChallenges();
 	}
 	
 	function RemoveChallenge(el)
 	{
+		var urlChallenges = getUrlParameter('challenges');
+		
+		if(typeof(urlChallenges) !== "undefined")
+		{
+			if(!confirm("Removing a challenge from this page will delete your locally saved challenges")){
+				return;
+			}
+		}
+	
 		var i = $(el).attr('id').replace( /^\D+/g, '');
 	
-		var challenges = JSON.parse(localStorage.challenges);
-		
-		if(challenges.length == 16)
-		{
-			alert("Can't have less than 16 challenges");
-			return;
-		}
+		var challenges = GetChallenges();
 		
 		challenges.splice(i, 1);
 		localStorage.challenges = JSON.stringify(challenges);
+		
+		if(typeof(urlChallenges) !== "undefined")
+		{
+			window.location = getBaseUrl();
+		}
 		
 		LoadChallenges();
 	}
@@ -112,7 +151,7 @@
 	{
 		$("#challenges").empty();
 		
-		var challenges = JSON.parse(localStorage.challenges);
+		var challenges = GetChallenges();
 		
 		for(var challenge in challenges){
 			$("#challenges").append("<li>" + challenges[challenge] + "<button style='margin-left:10px;color:red;' id='challenge-entry-" + challenge + "'> X </button></li>");
@@ -123,6 +162,27 @@
 	
 	function CreateChallenge()
 	{
+		var challenges = GetChallenges();
+		
+		if(challenges.length < 16)
+		{
+			alert("Can't have less than 16 challenges");
+			return;
+		}
+		
+		var seed = Math.floor(Math.random() * 100000);
+		
+		var urlSeed = getUrlParameter('seed');
+		
+		if(typeof(urlSeed) !== "undefined")
+		{
+			seed = urlSeed;
+		}
+		
+		$("#seed").val(seed);
+		
+		Math.seedrandom(seed + '');
+		
 		$("#challenge-grid").empty();
 		$("#challenge-grid").append("<table id='challenge-table'></table>");
 		
@@ -131,7 +191,7 @@
 		$("#challenge-table").append("<tr id='third-tr'></tr>");
 		$("#challenge-table").append("<tr id='fourth-tr'></tr>");
 		
-		var challenges = JSON.parse(localStorage.challenges);
+		var challenges = GetChallenges();
 		
 		for(var i = 0; i < 4; i++){
 			var x = Math.floor((Math.random() * challenges.length));
@@ -197,13 +257,47 @@
 		}
 	}
 	
+	var getUrlParameter = function getUrlParameter(sParam) {
+		var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+			sURLVariables = sPageURL.split('&'),
+			sParameterName,
+			i;
+
+		for (i = 0; i < sURLVariables.length; i++) {
+			sParameterName = sURLVariables[i].split('=');
+
+			if (sParameterName[0] === sParam) {
+				return sParameterName[1] === undefined ? true : sParameterName[1];
+			}
+		}
+	};
+	
+	var getBaseUrl = function getUrlParameter() {
+		return window.location.protocol + "//" + window.location.host + window.location.pathname;
+	};
+	
+	function GetChallenges()
+	{
+		var challenges = JSON.parse(localStorage.challenges);
+		
+		var urlChallenges = getUrlParameter('challenges');
+		
+		if(typeof(urlChallenges) !== "undefined")
+		{
+			challenges = JSON.parse(urlChallenges);
+		}
+		
+		return challenges;
+	}
 </script>
-	<div id="challenge-grid" style="width:1200px;display:inline-block;">a
+	<div id="challenge-grid" style="width:600px;display:inline-block;">a
 	</div>
 	<div id="settings-div" style="display:inline-block;">
 		<ul style="list-style-type:none;">
 			<li style=" padding: 5px;"><button id="generate-grid-button">Generate Challenge Grid</button></li>
 			<li style="padding: 5px;"><button id="pick-random-challenge">Pick random Challenge</button></li>
+			<li style="padding: 5px;"><button id="share-challenge">Create share link</button></li>
+			<li style="padding: 5px;"><div id="share"></div><input type="hidden" id="seed" /></li>
 			<li style=" padding: 5px;">Add challenge: <input type="text" id="challenge-text" /> <button id="add-challenge-button">Add</button></li>
 			<li style=" padding: 5px;">
 				Challenges:<br/>

@@ -10,6 +10,11 @@
 
 <body>
 <style>
+	@font-face {
+		font-family: marioFont;
+		src: url(Super_Mario_Bros.ttf);
+	}
+
 	table#challenge-table {
 		border: 1px solid;
 	}
@@ -19,6 +24,7 @@
 		width:120px;
 		height:120px;
 		cursor:pointer;
+		padding:3px;
 	}
 	
 	table#challenge-table td.done{
@@ -35,6 +41,14 @@
 	
 	table#challenge-table td.init{
 		background-color:white;
+	}
+	
+	#title span{
+		text-shadow:
+		   -1px -1px 0 #000,  
+			1px -1px 0 #000,
+			-1px 1px 0 #000,
+			 1px 1px 0 #000;
 	}
 	
 </style>
@@ -75,6 +89,27 @@
 		$("#add-challenge-button").click(function(){AddChallenge();});
 		
 		$("#share-challenge").click(function(){ShareChallenge();});
+		
+		$('#title').each(function(){
+			var letters = $(this).text().split('');
+			$(this).text('');
+			for(var i = 0; i < letters.length; i++){
+				switch(i % 4){
+					case 0:
+						$(this).append('<span style="color:#ff1500">' + letters[i] + '</span>');
+						break;
+					case 1:
+						$(this).append('<span style="color:#087eff">' + letters[i] + '</span>');
+						break;
+					case 2:
+						$(this).append('<span style="color:#fffb02">' + letters[i] + '</span>');
+						break;
+					case 3:
+						$(this).append('<span style="color:#4fd405">' + letters[i] + '</span>');
+						break;
+				}
+			}
+		});
 	});
 	
 	function ShareChallenge()
@@ -290,6 +325,7 @@
 		return challenges;
 	}
 </script>
+<h1 id="title" style="margin: 0 auto;text-align:center;font-family:marioFont">Panaetius' Mario Maker Challenge Creator</h1>
 	<div id="challenge-grid" style="width:600px;display:inline-block;">a
 	</div>
 	<div id="settings-div" style="display:inline-block;">

@@ -264,6 +264,7 @@
 	
 	function PickRandomChallenge()
 	{
+		$("#pick-random-challenge").prop("disabled",true);
 		$("td.selected").removeClass('selected').addClass('init');
 		
 		var elements = $("td").not(".done").not(".fail");
@@ -296,6 +297,7 @@
 			el.removeClass("init").addClass("selected", 500, "linear", function(){SetCell(el, --i, elements, target);});
 		}else{
 			$(target).removeClass("init").addClass("selected", true).effect( "shake" );
+			$("#pick-random-challenge").prop("disabled",false);
 		}
 	}
 	
